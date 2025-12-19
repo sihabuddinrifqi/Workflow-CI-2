@@ -1,4 +1,4 @@
-name: MLflow CI Retraining
+name: MLflow CI
 
 on:
   push:
@@ -6,29 +6,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  train-model:
+  train:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Miniconda
-        uses: conda-incubator/setup-miniconda@v3
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          auto-activate-base: false
-          activate-environment: rfm-clustering-env
-          environment-file: MLProject/conda.yaml
+          python-version: "3.9"
 
       - name: Install MLflow
         run: pip install mlflow
 
       - name: Run MLflow Project
-        working-directory: MLProject
-        run: mlflow run .
-
-      - name: Upload MLflow Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: mlflow-artifacts
-          path: MLProject/mlruns
+        run: |
+          cd MLProject
+          mlflow run .
